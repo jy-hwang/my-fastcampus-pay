@@ -1,12 +1,12 @@
 package com.fastcampuspay.membership.application.service;
 
+import com.fastcampuspay.common.UseCase;
 import com.fastcampuspay.membership.adapter.out.persistence.MembershipJpaEntity;
 import com.fastcampuspay.membership.adapter.out.persistence.MembershipMapper;
 import com.fastcampuspay.membership.application.port.in.RegisterMembershipCommand;
 import com.fastcampuspay.membership.application.port.in.RegisterMembershipUseCase;
 import com.fastcampuspay.membership.application.port.out.RegisterMembershipPort;
 import com.fastcampuspay.membership.domain.Membership;
-import common.UseCase;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -36,6 +36,6 @@ public class RegisterMembershipService implements RegisterMembershipUseCase {
             , new Membership.MembershipIsCorp(command.isCorp())
     );
 // entity -> Membership
-    return membershipMapper.mapToDomainEntity(jpaEntity);
+    return MembershipMapper.mapToDomainEntity(jpaEntity);
   }
 }
