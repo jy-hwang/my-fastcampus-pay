@@ -1,0 +1,41 @@
+version: '3'
+services:
+  mariadb :
+    image: docker.io/bitnami/mariadb:11.6
+    container_name: mariadb
+    ports:
+      - 3306:3306
+    volumes:
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
+      - ./db/data:/var/lib/mysql
+      - ./logs/maria:/var/log/mysql
+    environment:
+      - TZ="Asia/Seoul"
+      - ALLOW_EMPTY_PASSWORD=no
+      - MARIADB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MARIADB_USER=${DB_USERNAME}
+      - MARIADB_DATABASE=${DB_DATABASE}
+      - MARIADB_PASSWORD=${DB_PASSWORD}
+    networks:
+      - fastcampuspay_network
+    restart: always
+
+  membership-service:
+    image: myfastcampuspay-membership-service:0.0.1-SNAPSHOT
+    networks:
+      - fastcampuspay_network
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mariadb
+    environment:
+      - SPRING_DATASOURCE_URL=${DB_URL}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MariaDBDialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+networks:
+  fastcampuspay_network:
+    driver: bridge
